@@ -1,0 +1,70 @@
+@keyframes fadein {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+#background {
+  padding-top: 1em;
+  background-color:black;
+  height: 870px;
+  /* background-image: url('https://i.imgur.com/Y9ki1cT.png');
+  border-radius: 20px;
+  z-index: -1; */
+}
+.main {
+  margin-top: 30px;
+  -webkit-animation: fadein 2s;
+  width: 50%;
+}
+.mainContainer {
+  width: 75%;
+  height: 550px;
+  background-image: url('https://i.imgur.com/w98sqmT.png');
+  border-radius: 15px;
+  box-shadow: 0 0 5px rgb(105, 105, 105);
+  -webkit-animation: fadein 2s;
+}
+.gameTitle {
+  margin-bottom: 4em;
+  margin-top: 2em;
+  text-align: center;
+  -webkit-animation: fadein 2s;
+}
+.gamePic {
+  max-width: 38%;
+  border: 2px solid white;
+}
+.bottomForm {
+  text-align: center;
+}
+form {
+  text-align: center;
+}
+.formInput {
+  width: 50%;
+  margin-bottom: 0.5em;
+  -webkit-animation: fadein 2s;
+}
+.enter {
+  text-align: center;
+  height: 40px;
+  /* width: 33%; */
+}
+/* ------------------------------------------------------------------------------- */
+
+.gameContainer {
+  /* -webkit-animation: fadein 2s; */
+  /* text-align: center; */
+  height: 100%;
+}
+.scoreboard {
+  width: 300px;
+}
+.icon {
+  position: relative;
+  vertical-align: bottom;
+  width: 80%;
+  -webkit-animation: fadein 4s;
+}
+.activePrompts {
+  text-align: center;
+}
