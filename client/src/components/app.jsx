@@ -6,6 +6,8 @@ import Score from './score.jsx';
 import axios from 'axios';
 import socketIOClient from 'socket.io-client';
 import UserForm from './userForm.jsx';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+// import Playlist from 'react-mp3-player';
 const socket = socketIOClient('http://10.50.67.154:8080/');
 
 export default class App extends React.Component {
@@ -17,7 +19,8 @@ export default class App extends React.Component {
       allQuestions: [],
       username: '',
       room: 'einstein',
-      allRooms: [],
+      allRooms: {},
+      allRoomsCount: {},
       showForm: true,
       player: {},
       message: '',
@@ -26,12 +29,19 @@ export default class App extends React.Component {
       playerData: {},
       playerList: [],
       readyBtn: false,
-      showStartButton: false
+      spyCheck: false,
+      showStartButton: false,
+      timer: false,
+      showPrompts: false,
+      spyId: 'poopity'
     }
     this.ready = this.ready.bind(this);
+    this.spyCheckCall = this.spyCheckCall.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
     this.enterRoom = this.enterRoom.bind(this);
     this.showStartButton = this.showStartButton.bind(this);
+    this.begin = this.begin.bind(this);
+    this.vote = this.vote.bind(this);
   }
   
   componentDidMount() {
@@ -43,8 +53,8 @@ export default class App extends React.Component {
     })
     socket.on('roomCount', data => {
       this.setState({
-        allRooms: data
-      })
+        allRoomsCount: data
+      }, () => console.log(this.state.allRoomsCount))
     })
     socket.on('hello_user', data => {
       this.setState({
@@ -73,7 +83,8 @@ export default class App extends React.Component {
         list.push({
             name: data.playerData[keys].name,
             score: data.playerData[keys].score,
-            room: data.playerData[keys].room
+            room: data.playerData[keys].room,
+            id: data.playerData[keys].id
           })
       }
       this.setState({
@@ -103,12 +114,58 @@ export default class App extends React.Component {
         picture: data.picture
       })
     })
-    socket.on('startButton', (data) => {
-      // this.showStartButton()
-      console.log(data)
+    socket.on('startButton', data => {
       this.setState({
         showStartButton: !this.state.showStartButton,
         message: data.message
+      })
+    })
+    socket.on('sendPrompt', data => {
+      if (data.spyId === this.state.player.id) {
+        this.setState({
+          message: data.spyMessage,
+          timer: !this.state.timer,
+          showStartButton: !this.state.showStartButton,
+          spyId: data.spyId
+        }, () => console.log(this.state.spyId, "BITCH FACE"))
+        setTimeout(() => {
+          this.setState({
+            message: "Convince them you're not the Spy...",
+            timer: !this.state.timer,
+            showPrompts: !this.state.showPrompts
+          })
+        }, 5000)
+      } else {
+        this.setState({
+          message: data.realMessage,
+          timer: !this.state.timer,
+          showStartButton: !this.state.showStartButton,
+          spyId: data.spyId
+        })
+        setTimeout(() => {
+          this.setState({
+            message: 'Who is the Spy?',
+            timer: !this.state.timer,
+            showPrompts: !this.state.showPrompts
+          })
+        }, 5000)
+      }
+    })
+    socket.on('showAnswer', data => {
+      var list = [];
+      for (var keys in data.playerData) {
+        list.push({
+            name: data.playerData[keys].name,
+            score: data.playerData[keys].score,
+            room: data.playerData[keys].room,
+            id: data.playerData[keys].id
+          })
+      }
+      this.setState({
+        playerList: list,
+        message: data.message,
+        // readyBtn: true,
+        spyCheck: true,
       })
     })
   }
@@ -141,7 +198,7 @@ export default class App extends React.Component {
   }
   ready(id) {
     console.log(id)
-    socket.emit('ready', {id: id, room: this.state.room})
+    socket.emit('ready', {id: id, room: this.state.room, player: this.state.player})
     this.setState({
       readyBtn: false
     })
@@ -152,7 +209,22 @@ export default class App extends React.Component {
       message: data.message
     })
   }
+  begin() {
+    socket.emit('getQuestion', this.state.player)
+  }
+  vote(voteId) {
+    console.log(voteId)
+    this.setState({
+      showPrompts: !this.state.showPrompts,
+      message: 'Waiting for the other votes'
+    })
+    socket.emit('castVote', {voteId: voteId, room: this.state.room, player: this.state.player})
+  }
+  spyCheckCall(playerId) {
+    socket.emit('spyCheckCall', {id: playerId, player: this.state.player})
+  }
   render() {
+    // var tracks = [{img: 'null', name:'Spy', desc: 'Spy Theme', src: '../../dist/sms_tone.mp3'}];
     return(
       <div id="background">
         <div className="row d-flex justify-content-center">
@@ -170,6 +242,7 @@ export default class App extends React.Component {
                   enterRoom={this.enterRoom}
                   onInputChange={this.onInputChange}
                   allRooms={this.state.allRooms}
+                  allRoomsCount={this.state.allRoomsCount}
                 />
               ):(
                 <div>
@@ -179,8 +252,17 @@ export default class App extends React.Component {
                     player={this.state.player} 
                     message={this.state.message} 
                     readyBtn={this.state.readyBtn}
+                    spyCheck={this.state.spyCheck}
+                    spyCheckCall={this.spyCheckCall}
                     ready={this.ready}
+                    begin={this.begin}
                     startButton={this.state.showStartButton}
+                    timer={this.state.timer}
+                    countdown={CountdownCircleTimer}
+                    showPrompts={this.state.showPrompts}
+                    playerList={this.state.playerList}
+                    spyId={this.state.spyId}
+                    vote={this.vote}
                   />
                 </div>
               )}

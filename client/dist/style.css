@@ -5,7 +5,7 @@
 #background {
   padding-top: 1em;
   background-color:black;
-  height: 870px;
+  height: 950px;
   /* background-image: url('https://i.imgur.com/Y9ki1cT.png');
   border-radius: 20px;
   z-index: -1; */
@@ -16,7 +16,7 @@
   width: 50%;
 }
 .mainContainer {
-  width: 75%;
+  width: 85%;
   height: 550px;
   background-image: url('https://i.imgur.com/w98sqmT.png');
   border-radius: 15px;
@@ -62,9 +62,22 @@ form {
 .icon {
   position: relative;
   vertical-align: bottom;
-  width: 80%;
+  width: 200px;
   -webkit-animation: fadein 4s;
 }
 .activePrompts {
   text-align: center;
+}
+.gameMessage {
+  height: 15%;
+}
+.btnCont {
+  text-align: center;
+  padding: 5px;
+}
+.voteButtons {
+  margin-top: 100px;
+  /* margin-left: 10px; */
+  width: 80px;
+  height: 90px;
 }

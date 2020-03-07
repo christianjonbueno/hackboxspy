@@ -11,4 +11,8 @@ Router
   .route('/allQuestions')
   .get(controller.getQuestions)
 
+// Router
+//   .route('/enterRoom')
+//   .get(socket())
+
 module.exports = Router;
