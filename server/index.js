@@ -75,23 +75,17 @@ io.on('connection', socket => {
           socket.emit('hello_user', playerData[players])
         }
       }
-      console.log(`player ${i}'s name is ${playerData[i].name}`);
       io.to(player.room).emit('playerCount', { playerCount: io.sockets.adapter.rooms[player.room].length, playerData: playerData })
-      console.log(io.sockets.adapter.rooms[player.room].length, ` in the ${player.room} room`);
       clientsInRooms[player.room] = io.sockets.adapter.rooms[player.room].length;
-      console.log(clientsInRooms);
       io.emit('allRooms', clientsInRooms)
       if (clientsInRooms[player.room] === 4) {
-        console.log('game is ready');
         var playersInRoom = [];
         for (var keys in playerData) {
           if (playerData[keys].room === player.room) {
             playersInRoom.push(playerData[keys])
           }
         }
-        console.log(playersInRoom)
         var spy = playersInRoom[Math.floor(Math.random() * 4)];
-        console.log(spy.name, " is the spy!");
         currentSpy[player.room] = spy;
         io.to(player.room).emit('showFakeButton', {playerData});
       }
@@ -102,10 +96,7 @@ io.on('connection', socket => {
   })
   socket.on('ready', data => {
     count[data.room]++;
-    console.log(data.id)
-    console.log(currentSpy)
     if (data.id === currentSpy[data.room].id) {
-      console.log(currentSpy[data.room].name, ' you are the spy')
       io.to(socket.id).emit('spyMessage', {message:`You are the Spy. Try your best to blend in with the others when the time comes!`, picture:'https://i.imgur.com/LHU7oe9.png'});
       if (count[data.room] === 4) {
         io.to(data.room).emit('startButton', {message: 'The game will start once any player presses Begin.'})
@@ -123,45 +114,51 @@ io.on('connection', socket => {
   })
   socket.on('getQuestion', (player) => {
     var selected = roomQuestions[player.room][Math.floor(Math.random() * roomQuestions[player.room].length)]
-    console.log(selected);
-    console.log(roomQuestions[player.room].indexOf(selected))
     roomQuestions[player.room].splice(roomQuestions[player.room].indexOf(selected), 1);
-    console.log(roomQuestions[player.room])
-    io.to(player.room).emit('sendPrompt', {spyId: currentSpy[player.room].id, spyMessage: 'Try to blend in with the others!', realMessage: selected.prompt});
+    io.to(player.room).emit('sendPrompt', {spyId: currentSpy[player.room].id, spyMessage: selected.fake, realMessage: selected.prompt});
   })
   socket.on('castVote', (data) => {
-    console.log(data)
-    console.log(playerData)
-    console.log(playerData[data.player.index])
     if (data.voteId === currentSpy[data.room].id) {
       voteCount[data.player.room] ++;
       playerData[data.player.index]['score'] += 1;
-
+      if (playerData[`${data.player.index}`]['score'] === 5) {
+        io.to(data.player.room).emit('endGame', {playerData: playerData, message: `The Spy was ${currentSpy[data.room].name}!\nGame over. The winner is ${playerData[data.player.index]['name']}!`, currentSpy: currentSpy[data.room].id})
+        voteCount[data.player.room] = 0;
+        currentSpy[data.player.room] = {};
+      }
     } else {
       voteCount[data.player.room] ++;
       playerData[currentSpy[data.room].index].score += 1;
+      if (playerData[`${data.player.index}`]['score'] === 5) {
+        io.to(data.player.room).emit('endGame', {playerData: playerData, message: `The Spy was ${currentSpy[data.room].name}!\nGame over. The winner is ${playerData[data.player.index]['name']}!`, currentSpy: currentSpy[data.room].id})
+        voteCount[data.player.room] = 0;
+        currentSpy[data.player.room] = {};
+      }
     }
     console.log(playerData)
     if (voteCount[data.player.room] === 3) {
-      io.to(data.player.room).emit('showAnswer', {playerData: playerData, message: `The Spy was ${currentSpy[data.room].name}!\nGet ready for the next round...`})
+      io.to(data.player.room).emit('showAnswer', {playerData: playerData, message: `The Spy was ${currentSpy[data.room].name}!\nNext round`, currentSpy: currentSpy[data.room].id})
       voteCount[data.player.room] = 0;
       currentSpy[data.player.room] = {};
     }
   })
-  socket.on('spyCheckCall', data => {
+  socket.on('nextRoundCall', data => {
     var playersInRoom = [];
       for (var keys in playerData) {
         if (playerData[keys].room === data.player.room) {
           playersInRoom.push(playerData[keys])
         }
       }
-      console.log(playersInRoom)
       var spy = playersInRoom[Math.floor(Math.random() * 4)];
-      console.log(spy.name, " is the spy!");
       currentSpy[data.player.room] = spy;
-      console.log(data)
-      if (data.id === spy.id) {
-        io.to(socket.id).emit('spyMessage', {message:`You are the Spy. Try your best to blend in with the others when the time comes!`, picture:'https://i.imgur.com/LHU7oe9.png'});
-      }
+      io.to(data.player.room).emit('checkIfSpy', {message: 'See if you are the next Spy...'})
+  })
+  socket.on('resetGame', (data) => {
+    clientsInRooms[data.player.room] = 0;
+    count[data.player.room] = 0;
+    roomQuestions[data.player.room] = JSON.parse(JSON.stringify(questions));
+    voteCount[data.player.room] = 0;
+    currentSpy[data.player.room] = '';
+    socket.leave(data.player.room);
   })
 })

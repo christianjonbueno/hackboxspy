@@ -29,26 +29,29 @@ export default class App extends React.Component {
       playerData: {},
       playerList: [],
       readyBtn: false,
-      spyCheck: false,
+      nextRound: false,
       showStartButton: false,
       timer: false,
       showPrompts: false,
-      spyId: 'poopity'
+      spyId: 'poopity',
+      newGame: false
     }
     this.ready = this.ready.bind(this);
-    this.spyCheckCall = this.spyCheckCall.bind(this);
+    this.nextRoundCall = this.nextRoundCall.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
     this.enterRoom = this.enterRoom.bind(this);
     this.showStartButton = this.showStartButton.bind(this);
     this.begin = this.begin.bind(this);
     this.vote = this.vote.bind(this);
+    this.resetGame = this.resetGame.bind(this);
   }
   
   componentDidMount() {
     axios.get('/allQuestions')
     .then(data => {
       this.setState({
-        allQuestions: data.data
+        allQuestions: data.data,
+        newGame: false
       })
     })
     socket.on('roomCount', data => {
@@ -127,14 +130,14 @@ export default class App extends React.Component {
           timer: !this.state.timer,
           showStartButton: !this.state.showStartButton,
           spyId: data.spyId
-        }, () => console.log(this.state.spyId, "BITCH FACE"))
+        })
         setTimeout(() => {
           this.setState({
             message: "Convince them you're not the Spy...",
             timer: !this.state.timer,
-            showPrompts: !this.state.showPrompts
+            showPrompts: false
           })
-        }, 5000)
+        }, 8000)
       } else {
         this.setState({
           message: data.realMessage,
@@ -146,9 +149,9 @@ export default class App extends React.Component {
           this.setState({
             message: 'Who is the Spy?',
             timer: !this.state.timer,
-            showPrompts: !this.state.showPrompts
+            showPrompts: true
           })
-        }, 5000)
+        }, 8000)
       }
     })
     socket.on('showAnswer', data => {
@@ -161,11 +164,45 @@ export default class App extends React.Component {
             id: data.playerData[keys].id
           })
       }
+      if (data.currentSpy === this.state.player.id) {
+        this.setState({
+          playerList: list,
+          message: data.message,
+          // readyBtn: true,
+          nextRound: true,
+        })
+      } else {
+        this.setState({
+          playerList: list,
+          message: data.message,
+          // readyBtn: true,
+          // nextRound: true,
+        })
+      }
+    })
+    socket.on('checkIfSpy', data => {
       this.setState({
-        playerList: list,
+        readyBtn: true,
+        nextRound: false,
+        message: data.message
+      })
+    })
+    socket.on('endGame', data => {
+      var list = [];
+      for (var keys in data.playerData) {
+        list.push({
+            name: data.playerData[keys].name,
+            score: data.playerData[keys].score,
+            room: data.playerData[keys].room,
+            id: data.playerData[keys].id
+          })
+      }
+      this.setState({
         message: data.message,
-        // readyBtn: true,
-        spyCheck: true,
+        showPrompts: false,
+        nextRound: false,
+        playerList: list,
+        newGame: true,
       })
     })
   }
@@ -220,8 +257,11 @@ export default class App extends React.Component {
     })
     socket.emit('castVote', {voteId: voteId, room: this.state.room, player: this.state.player})
   }
-  spyCheckCall(playerId) {
-    socket.emit('spyCheckCall', {id: playerId, player: this.state.player})
+  nextRoundCall(playerId) {
+    socket.emit('nextRoundCall', {id: playerId, player: this.state.player})
+  }
+  resetGame() {
+    socket.emit('resetGame', {player: this.state.player})
   }
   render() {
     // var tracks = [{img: 'null', name:'Spy', desc: 'Spy Theme', src: '../../dist/sms_tone.mp3'}];
@@ -252,8 +292,8 @@ export default class App extends React.Component {
                     player={this.state.player} 
                     message={this.state.message} 
                     readyBtn={this.state.readyBtn}
-                    spyCheck={this.state.spyCheck}
-                    spyCheckCall={this.spyCheckCall}
+                    nextRound={this.state.nextRound}
+                    nextRoundCall={this.nextRoundCall}
                     ready={this.ready}
                     begin={this.begin}
                     startButton={this.state.showStartButton}
@@ -263,6 +303,8 @@ export default class App extends React.Component {
                     playerList={this.state.playerList}
                     spyId={this.state.spyId}
                     vote={this.vote}
+                    newGame={this.state.newGame}
+                    resetGame={this.resetGame}
                   />
                 </div>
               )}

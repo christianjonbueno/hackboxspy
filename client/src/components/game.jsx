@@ -15,7 +15,7 @@ export default function Game(props) {
         {props.timer ? (
         <CountdownCircleTimer 
           isPlaying
-          durationSeconds={5}
+          durationSeconds={8}
           colors={[
               ['#004777', .33],
               ['#F7B801', .33],
@@ -24,9 +24,10 @@ export default function Game(props) {
         />):null}
         {props.showPrompts ? <Prompts spyId={props.spyId} player={props.player} playerList={props.playerList} vote={props.vote} />:null}
         {props.readyBtn ? <button type="button" className="btn btn-success" onClick={() => props.ready(props.player.id)}>Spy Check</button> : null}
-        {props.spyCheck ? <button type="button" className="btn btn-success" onClick={() => props.spyCheckCall(props.player.id)}>Spy Check</button> : null}
+        {props.nextRound ? <button type="button" className="btn btn-success" onClick={() => props.nextRoundCall(props.player.id)}>Next Round</button> : null}
         <p/>
         {props.startButton ? <button type="button" className="btn btn-danger" onClick={() => props.begin()}>Begin</button>: null}
+        {props.newGame? <a href="http://localhost:8080"><button type="button" className="btn btn-primary" onClick={() => props.resetGame()}>New Game</button></a>: null}
       </div>
     </animated.div>
   )
