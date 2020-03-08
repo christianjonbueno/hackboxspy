@@ -205,6 +205,31 @@ export default class App extends React.Component {
         newGame: true,
       })
     })
+    socket.on('resetScores', () => {
+      this.setState({
+        gameCard: true,
+        inGame: false,
+        allQuestions: [],
+        username: '',
+        room: 'einstein',
+        allRooms: {},
+        allRoomsCount: {},
+        showForm: true,
+        player: {},
+        message: '',
+        picture: '',
+        playerCount: '',
+        playerData: {},
+        playerList: [],
+        readyBtn: false,
+        nextRound: false,
+        showStartButton: false,
+        timer: false,
+        showPrompts: false,
+        spyId: 'poopity',
+        newGame: false
+      })
+    })
   }
   
   onInputChange(e) {

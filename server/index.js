@@ -159,6 +159,7 @@ io.on('connection', socket => {
     roomQuestions[data.player.room] = JSON.parse(JSON.stringify(questions));
     voteCount[data.player.room] = 0;
     currentSpy[data.player.room] = '';
+    io.to(data.player.room).emit('resetScores')
     socket.leave(data.player.room);
   })
 })

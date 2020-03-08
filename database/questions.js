@@ -5,7 +5,7 @@ module.exports = questions = [
   },
   { 
     prompt: "Give a compliment to the player to your left.",
-    fake: "Tell the person to your left: 'You have a (adjective) (body part)!"
+    fake: "Tell the person to your left: 'You have (adjective) (body part)!"
   },
   { 
     prompt: "Stand up if you're the oldest player." ,
