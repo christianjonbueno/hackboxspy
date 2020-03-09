@@ -40,7 +40,7 @@ export default class Prompts extends React.Component {
               })}
             </select> */}
             {this.state.list.map((player) => {
-              return <div className="col-4 btnCont"><button type="button" className="btn btn-success voteButtons" onClick={() => this.sendVote(player.id)}>{player.name}</button></div>
+              return player.room === this.props.room ? <div className="col-4 btnCont"><button type="button" className="btn btn-success voteButtons" onClick={() => this.sendVote(player.id)}>{player.name}</button></div>:null
             })}
             <p/>
           {/* </form> */}

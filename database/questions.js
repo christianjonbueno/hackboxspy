@@ -1,11 +1,11 @@
 module.exports = questions = [
   { 
     prompt: "Say the name of your favorite movie.",
-    fake: "Say: 'It's definitely (a movie you've never seen)."
+    fake: "Say: 'It's definitely (a movie you've never seen).'"
   },
   { 
     prompt: "Give a compliment to the player to your left.",
-    fake: "Tell the person to your left: 'You have (adjective) (body part)!"
+    fake: "Tell the person to your left: 'You have (adjective) (body part)!'"
   },
   { 
     prompt: "Stand up if you're the oldest player." ,
@@ -29,22 +29,22 @@ module.exports = questions = [
   },
   { 
     prompt: "Tell the other players what the last thing you've eaten was?" ,
-    fake: "Tell the other players: 'It was (food)."
+    fake: "Tell the other players: 'It was (food).'"
   },
   { 
-    prompt: "Start singing any Britney Spears song." ,
-    fake: "Start singing any Christina Aguilera song."
+    prompt: "Say a famous quote to another player." ,
+    fake: "Give a player bad advice about something."
   },
   { 
     prompt: "Say the name of the player to your left in a confused voice." ,
     fake: "Say the last name of the player to your left."
   },
   { 
-    prompt: "Say exactly this out loud: I'm the Spy" ,
-    fake: "Say exactly this out loud: I am the Spy"
+    prompt: "Say this out loud: I'm the Spy." ,
+    fake: "Say this out loud: I am the Spy."
   },
   { 
-    prompt: "Say: 'I can beat (name of player) in (name of videogame)." ,
+    prompt: "Tell the other players who you think is the best at video games." ,
     fake: "Say: '(Name of player) is the best'."
   },
   { 

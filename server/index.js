@@ -120,17 +120,19 @@ io.on('connection', socket => {
   socket.on('castVote', (data) => {
     if (data.voteId === currentSpy[data.room].id) {
       voteCount[data.player.room] ++;
-      playerData[data.player.index]['score'] += 1;
+      playerData[`${data.player.index}`]['score'] += 1;
       if (playerData[`${data.player.index}`]['score'] === 5) {
-        io.to(data.player.room).emit('endGame', {playerData: playerData, message: `The Spy was ${currentSpy[data.room].name}!\nGame over. The winner is ${playerData[data.player.index]['name']}!`, currentSpy: currentSpy[data.room].id})
+        console.log(playerData[`${data.player.index}`]['name'], " wins")
+        io.to(data.player.room).emit('endGame', {playerData: playerData, message: `The Spy was ${currentSpy[data.room].name}!\nGame over. The winner is ${playerData[`${data.player.index}`]['name']}!`, currentSpy: currentSpy[data.room].id})
         voteCount[data.player.room] = 0;
         currentSpy[data.player.room] = {};
       }
     } else {
       voteCount[data.player.room] ++;
       playerData[currentSpy[data.room].index].score += 1;
-      if (playerData[`${data.player.index}`]['score'] === 5) {
-        io.to(data.player.room).emit('endGame', {playerData: playerData, message: `The Spy was ${currentSpy[data.room].name}!\nGame over. The winner is ${playerData[data.player.index]['name']}!`, currentSpy: currentSpy[data.room].id})
+      if (playerData[currentSpy[data.room].index].score === 5) {
+        console.log(playerData[`${data.player.index}`]['name'], " wins")
+        io.to(data.player.room).emit('endGame', {playerData: playerData, message: `The Spy was ${currentSpy[data.room].name}!\nGame over. The winner is ${currentSpy[data.room].name}!`, currentSpy: currentSpy[data.room].id})
         voteCount[data.player.room] = 0;
         currentSpy[data.player.room] = {};
       }
@@ -154,6 +156,7 @@ io.on('connection', socket => {
       io.to(data.player.room).emit('checkIfSpy', {message: 'See if you are the next Spy...'})
   })
   socket.on('resetGame', (data) => {
+    console.log(playerData)
     clientsInRooms[data.player.room] = 0;
     count[data.player.room] = 0;
     roomQuestions[data.player.room] = JSON.parse(JSON.stringify(questions));
@@ -161,5 +164,6 @@ io.on('connection', socket => {
     currentSpy[data.player.room] = '';
     io.to(data.player.room).emit('resetScores')
     socket.leave(data.player.room);
+    console.log(playerData)
   })
 })

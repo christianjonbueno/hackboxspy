@@ -22,12 +22,13 @@ export default function Game(props) {
               ['#A30000']
           ]}
         />):null}
-        {props.showPrompts ? <Prompts spyId={props.spyId} player={props.player} playerList={props.playerList} vote={props.vote} />:null}
+        {props.showPrompts ? <Prompts room={props.room} spyId={props.spyId} player={props.player} playerList={props.playerList} vote={props.vote} />:null}
         {props.readyBtn ? <button type="button" className="btn btn-success" onClick={() => props.ready(props.player.id)}>Spy Check</button> : null}
         {props.nextRound ? <button type="button" className="btn btn-success" onClick={() => props.nextRoundCall(props.player.id)}>Next Round</button> : null}
         <p/>
         {props.startButton ? <button type="button" className="btn btn-danger" onClick={() => props.begin()}>Begin</button>: null}
-        {props.newGame? <a href="http://localhost:8080"><button type="button" className="btn btn-primary" onClick={() => props.resetGame()}>New Game</button></a>: null}
+        {/* {props.newGame ? <a href="http://localhost:8080"><button type="button" className="btn btn-primary" onClick={() => props.resetGame()}>New Game</button></a>: null} */}
+        {props.newGame ?<button type="button" className="btn btn-primary" onClick={() => props.resetGame()}>New Game</button>: null}
       </div>
     </animated.div>
   )

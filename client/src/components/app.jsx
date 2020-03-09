@@ -8,7 +8,10 @@ import socketIOClient from 'socket.io-client';
 import UserForm from './userForm.jsx';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 // import Playlist from 'react-mp3-player';
+// School ip:
 const socket = socketIOClient('http://10.50.67.154:8080/');
+// Home ip:
+// const socket = socketIOClient('http://192.168.1.198:8080/');
 
 export default class App extends React.Component {
   constructor(props) {
@@ -33,7 +36,7 @@ export default class App extends React.Component {
       showStartButton: false,
       timer: false,
       showPrompts: false,
-      spyId: 'poopity',
+      spyId: '',
       newGame: false
     }
     this.ready = this.ready.bind(this);
@@ -226,7 +229,7 @@ export default class App extends React.Component {
         showStartButton: false,
         timer: false,
         showPrompts: false,
-        spyId: 'poopity',
+        spyId: '',
         newGame: false
       })
     })
@@ -286,6 +289,29 @@ export default class App extends React.Component {
     socket.emit('nextRoundCall', {id: playerId, player: this.state.player})
   }
   resetGame() {
+    this.setState({
+      gameCard: true,
+      inGame: false,
+      allQuestions: [],
+      username: '',
+      room: 'einstein',
+      allRooms: {},
+      allRoomsCount: {},
+      showForm: true,
+      player: {},
+      message: '',
+      picture: '',
+      playerCount: '',
+      playerData: {},
+      playerList: [],
+      readyBtn: false,
+      nextRound: false,
+      showStartButton: false,
+      timer: false,
+      showPrompts: false,
+      spyId: '',
+      newGame: false
+    })
     socket.emit('resetGame', {player: this.state.player})
   }
   render() {
