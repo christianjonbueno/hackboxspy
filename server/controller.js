@@ -1,10 +1,10 @@
-const Question = require('../database/index.js');
+// const Question = require('../database/index.js');
 
-module.exports = controller = {
-  getQuestions: (req, res) => {
-    Question.find()
-    .then((data) => {
-      res.status(200).send(data)
-    });
-  },
-}
+// module.exports = controller = {
+//   getQuestions: (req, res) => {
+//     Question.find()
+//     .then((data) => {
+//       res.status(200).send(data)
+//     });
+//   },
+// }

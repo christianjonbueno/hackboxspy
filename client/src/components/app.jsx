@@ -50,12 +50,12 @@ export default class App extends React.Component {
   }
   
   componentDidMount() {
-    axios.get('/allQuestions')
-    .then(data => {
+    // axios.get('/allQuestions')
+    // .then(data => {
       this.setState({
         allQuestions: data.data,
         newGame: false
-      })
+      // })
     })
     socket.on('roomCount', data => {
       this.setState({
